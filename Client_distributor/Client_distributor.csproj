@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.CommandLine" Version="2.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Destributor_services\Destributor_services.csproj" />
+    <ProjectReference Include="..\Distributor_abstractions\Distributor_abstractions.csproj" />
+    <ProjectReference Include="..\Distributor_domain\Distributor_domain.csproj" />
+    <ProjectReference Include="..\Distributor_infrastructure\Distributor_infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>

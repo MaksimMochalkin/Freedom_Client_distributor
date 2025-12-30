@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Distributor_abstractions\Distributor_abstractions.csproj" />
+    <ProjectReference Include="..\Distributor_domain\Distributor_domain.csproj" />
+    <ProjectReference Include="..\Distributor_infrastructure\Distributor_infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>
