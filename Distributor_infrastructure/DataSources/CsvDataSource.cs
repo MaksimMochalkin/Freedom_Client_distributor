@@ -42,7 +42,9 @@ public sealed class CsvDataSource<T> : IDataSource<T>
             csv.ReadHeader();
 
             var header = csv.Context.Reader!.HeaderRecord!;
-            _schemaValidator.Validate(typeof(T), header);
+            var validationResult = _schemaValidator.Validate(typeof(T), header);
+            if (!validationResult.IsSuccess)
+                return Result<IReadOnlyList<T>>.Fail(validationResult.Error!);
 
             var map = _mapProvider.GetMap(typeof(T));
             csv.Context.RegisterClassMap(map);
@@ -55,9 +57,8 @@ public sealed class CsvDataSource<T> : IDataSource<T>
             }
             return Result<IReadOnlyList<T>>.Ok(records);
         }
-        catch (Exception ex)
+        catch (Exception)
         {
-            Console.WriteLine(ex.ToString());
             return Result<IReadOnlyList<T>>.Fail(LogicError.CsvReaderError);
         }
     }

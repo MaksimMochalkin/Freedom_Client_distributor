@@ -1,4 +1,5 @@
-﻿using Distributor_domain.CliStructs;
+﻿using Distributor_domain;
+using Distributor_domain.CliStructs;
 
 namespace Distributor_abstractions;
 
@@ -10,7 +11,7 @@ public interface IAssigmentOrchestrator
     /// <param name="loadOptions"></param>
     /// <param name="cancellationToken"></param>
     /// <returns>Не возвращает данные. Записывает полученные данные в json файл</returns>
-    Task RunAsync(
+    Task<Result<AssignmentContext>> RunAsync(
         CliOptions loadOptions,
         CancellationToken cancellationToken = default);
 }

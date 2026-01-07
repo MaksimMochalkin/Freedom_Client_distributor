@@ -1,4 +1,6 @@
-﻿namespace Distributor_abstractions;
+﻿using Distributor_domain;
+
+namespace Distributor_abstractions;
 
 public interface ICsvSchemaValidator
 {
@@ -7,5 +9,5 @@ public interface ICsvSchemaValidator
     /// </summary>
     /// <param name="dtoType"></param>
     /// <param name="header"></param>
-    void Validate(Type dtoType, string[] header);
+    Result<string> Validate(Type dtoType, string[] header);
 }

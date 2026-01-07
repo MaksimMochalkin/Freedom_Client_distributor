@@ -7,7 +7,7 @@ public interface IAsyncPipelineStep<TInput, TOutput>
     /// <summary>
     /// Универсальный метод выполнения шага пайплайна
     /// </summary>
-    /// <param name="input"></param>
+    /// <typeparam name="input">Контекст выполнения</typeparam>
     /// <param name="ct"></param>
     /// <returns>Result<TOutput></returns>
     Task<Result<TOutput>> ExecuteAsync(TInput input, CancellationToken ct = default);

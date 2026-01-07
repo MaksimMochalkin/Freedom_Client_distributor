@@ -8,6 +8,9 @@ public static class CliErrors
     public static Error Missing(string option) =>
         new("MISSING_ARGUMENT", $"Missing required argument: {option}\n\n{HelpText}");
 
+    public static Error InvalidInputParam(string msg) =>
+        new("INVALID_PARAM", $"Invalid input param: {msg}");
+
     public static string HelpText =>
 """
 Usage:

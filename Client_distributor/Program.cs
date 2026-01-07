@@ -2,6 +2,7 @@
 using Destributor_services.AssigmentLogic;
 using Destributor_services.DataReciverServices;
 using Destributor_services.GeoServices;
+using Destributor_services.PathValidator;
 using Destributor_services.PiplineExecutor;
 using Destributor_services.PiplineSteps;
 using Destributor_services.Staps;
@@ -56,18 +57,24 @@ internal static class Program
         string[] args,
         CancellationToken cancellationToken = default)
     {
-        var parseResult = CliStartParserService.Parse(args);
-
-        if (!parseResult.IsSuccess)
-        {
-            Console.WriteLine(parseResult.Error!.Message);
-            return;
-        }
-
-        var options = parseResult.Value!;
-
         try
         {
+            var parseResult = CliStartParserService.Parse(args);
+
+            if (!parseResult.IsSuccess)
+            {
+                Console.WriteLine(parseResult.Error!.Message);
+                return;
+            }
+
+            var options = parseResult.Value!;
+            var validationResult = InputPathsValidator.ValidateInputParams(options);
+            if (!validationResult.IsSuccess)
+            {
+                Console.WriteLine(validationResult.Error!.Message);
+                return;
+            }
+
             var geoService = InitGeoService();
             var dataFactory = InitDataSource();
             var dataReciverService = new CsvDataResiverService(dataFactory);
@@ -82,14 +89,20 @@ internal static class Program
 
             var saveAssigmentResultStep = new SaveResultToJsonStep(filePath);
 
-            var steps = new List<IAsyncPipelineStep<AssignmentContext, AssignmentContext>> { loadDataStep, validationStep, assignClientsStep, saveAssigmentResultStep };
+            var steps = new List<IAsyncPipelineStep<AssignmentContext, AssignmentContext>>
+            { 
+                loadDataStep, validationStep, assignClientsStep, saveAssigmentResultStep 
+            };
             var pipline = new Pipeline<AssignmentContext>(steps);
             var runer = new AssigmentOrchestrator(pipline);
-            await runer.RunAsync(
+            var piplineResult = await runer.RunAsync(
                 options,
                 cancellationToken);
 
-            Console.WriteLine($"Processing completed successfully. The output json in your {filePath} folder");
+            if (piplineResult.IsSuccess)
+                Console.WriteLine($"Processing completed successfully. The output json in your {filePath} folder");
+            else
+                Console.WriteLine($"Processing completed unsuccessfully. Code: {piplineResult.Error!.Code}, Message: {piplineResult.Error!.Message}");
         }
         catch (OperationCanceledException)
         {

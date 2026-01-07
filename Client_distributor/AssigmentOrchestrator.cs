@@ -22,8 +22,15 @@ public sealed class AssigmentOrchestrator : IAssigmentOrchestrator
     /// </summary>
     /// <param name="loadOptions"></param>
     /// <param name="cancellationToken"></param>
-    /// <returns>Не возвращает данные. Записывает полученные данные в json файл</returns>
-    public async Task RunAsync(
+    /// <returns>Возвращает результат выполнения пайплайна.</returns>
+    /// <returns>
+    /// <see cref="Result{T}"/> с:
+    /// <list type="bullet">
+    /// <item><description><c>Ok(options)</c>, если пайплайн завершился успешно</description></item>
+    /// <item><description><c>Fail(error)</c>, если пайплайн завершился неуспешно</description></item>
+    /// </list>
+    /// </returns>
+    public async Task<Result<AssignmentContext>> RunAsync(
         CliOptions loadOptions,
         CancellationToken cancellationToken = default)
     {
@@ -33,6 +40,8 @@ public sealed class AssigmentOrchestrator : IAssigmentOrchestrator
             cancellationToken);
 
         if (!result.IsSuccess)
-            throw new Exception(result.Error!.Message);
+            return result;
+
+        return result;
     }
 }

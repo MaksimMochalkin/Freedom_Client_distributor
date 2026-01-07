@@ -1,4 +1,5 @@
 ﻿using Distributor_abstractions;
+using Distributor_domain;
 using Distributor_domain.Dtos;
 
 namespace Distributor_infrastructure.CsvStructValidator;
@@ -13,17 +14,23 @@ public sealed class CsvSchemaValidator : ICsvSchemaValidator
     /// </summary>
     /// <param name="dtoType"></param>
     /// <param name="header"></param>
-    public void Validate(Type dtoType, string[] header)
+    public Result<string> Validate(Type dtoType, string[] header)
     {
+        Result<string> result = new Result<string>();
         if (dtoType == typeof(EmployeeDto))
-            ValidateEmployee(header);
+            result = ValidateEmployee(header);
         else if (dtoType == typeof(BranchDto))
-            ValidateBranch(header);
+            result = ValidateBranch(header);
         else if (dtoType == typeof(ClientDto))
-            ValidateClient(header);
+            result = ValidateClient(header);
+
+        if (result.IsSuccess)
+            return result;
+
+        return Result<string>.Fail(new("VALIDATOR_NOT_FOUND", "Validator not found"));
     }
 
-    private static void ValidateEmployee(string[] header)
+    private static Result<string> ValidateEmployee(string[] header)
     {
         var expected = new[]
         {
@@ -34,10 +41,10 @@ public sealed class CsvSchemaValidator : ICsvSchemaValidator
             "Навыки"
         };
 
-        ValidateExact(expected, header);
+        return ValidateExact(expected, header);
     }
 
-    private static void ValidateBranch(string[] header)
+    private static Result<string> ValidateBranch(string[] header)
     {
         var expected = new[]
         {
@@ -47,10 +54,10 @@ public sealed class CsvSchemaValidator : ICsvSchemaValidator
             "Город",
         };
 
-        ValidateExact(expected, header);
+        return ValidateExact(expected, header);
     }
 
-    private static void ValidateClient(string[] header)
+    private static Result<string> ValidateClient(string[] header)
     {
         var expected = new[]
         {
@@ -60,37 +67,14 @@ public sealed class CsvSchemaValidator : ICsvSchemaValidator
             "Атрибуты"
         };
 
-        ValidateExact(expected, header);
+        return ValidateExact(expected, header);
     }
 
-    private static void ValidateExact(string[] expected, string[] actual)
+    private static Result<string> ValidateExact(string[] expected, string[] actual)
     {
         if (!expected.SequenceEqual(actual))
-            throw new CsvSchemaMismatchException(expected, actual);
-    }
-}
+            return Result<string>.Fail(new("FILE_STRUCT_INVALID", $"File struct invalid: expected{expected}, actual: {actual}"));
 
-[Serializable]
-internal class CsvSchemaMismatchException : Exception
-{
-    private string[] expected;
-    private string[] actual;
-
-    public CsvSchemaMismatchException()
-    {
-    }
-
-    public CsvSchemaMismatchException(string? message) : base(message)
-    {
-    }
-
-    public CsvSchemaMismatchException(string[] expected, string[] actual)
-    {
-        this.expected = expected;
-        this.actual = actual;
-    }
-
-    public CsvSchemaMismatchException(string? message, Exception? innerException) : base(message, innerException)
-    {
+        return Result<string>.Ok("Struct is valid");
     }
 }

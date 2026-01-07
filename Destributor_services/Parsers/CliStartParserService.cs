@@ -12,7 +12,13 @@ public static class CliStartParserService
     /// Метод обработки путей к файлам
     /// </summary>
     /// <param name="args"></param>
-    /// <returns></returns>
+    /// <returns>
+    /// <see cref="Result{T}"/> с:
+    /// <list type="bullet">
+    /// <item><description><c>Ok(options)</c>, если все пути валидны</description></item>
+    /// <item><description><c>Fail(error)</c>, если хотя бы один аргумент не прошёл проверку</description></item>
+    /// </list>
+    /// </returns>
     public static Result<CliOptions> Parse(string[] args)
     {
         if (args.Length == 0 || args.Contains("--help"))
@@ -38,7 +44,7 @@ public static class CliStartParserService
             EmployeesPath: employees,
             BranchesPath: branches,
             ClientsPath: clients,
-            Format: format
+            Format: format.ToLowerInvariant()
         ));
     }
 }

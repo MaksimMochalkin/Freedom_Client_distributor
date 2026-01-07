@@ -19,8 +19,8 @@ public sealed class Pipeline<T>
     /// <summary>
     /// Обработка шагов пайплайна
     /// </summary>
-    /// <param name="input"></param>
-    /// <param name="ct"></param>
+    /// <typeparam name="input">Контекст выполнения</typeparam>
+    /// <param name="ct">Токен отмены</param>
     /// <returns>Result<T></returns>
     public async Task<Result<T>> ExecuteAsync(T input, CancellationToken ct = default)
     {
