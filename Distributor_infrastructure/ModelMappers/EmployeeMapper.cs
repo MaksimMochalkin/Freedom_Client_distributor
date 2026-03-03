@@ -12,7 +12,7 @@ public static class EmployeeMapper
         => new(
             id: dto.EmployeeId.ToString(),
             branch: dto.Branch,
-            clientCount: dto.ClientCount,
+            initialClients: dto.ClientCount,
             skills: dto.Skills
         );
 }
